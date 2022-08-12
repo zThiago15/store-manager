@@ -13,4 +13,12 @@ const selectById = async (req, res, _next) => {
   return res.status(200).json(product);
 };
 
-module.exports = { selectAll, selectById };
+const create = async (req, res, _next) => {
+  const { name } = req.body;
+
+  const productCreated = await productsServices.create(name);
+
+  return res.status(201).json(productCreated);
+};
+
+module.exports = { selectAll, selectById, create };

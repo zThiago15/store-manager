@@ -12,4 +12,10 @@ const getById = async (id) => {
   return response;
 };
 
-module.exports = { selectAll, getById };
+const create = async (name) => {
+  const response = await productsModel.create(name);
+
+  return { id: response.insertId, name };
+};
+
+module.exports = { selectAll, getById, create };
