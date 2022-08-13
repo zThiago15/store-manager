@@ -32,12 +32,8 @@ const update = async (name, id) => {
 const remove = async (id) => {
   try {
     const query = 'DELETE FROM StoreManager.products WHERE id = ?';
-    const response = await connection.execute(query, [id]);
-
-    if (!response) {
-      throw new Error('id inválido');
-    }
-
+    await connection.execute(query, [id]);
+    
     return true;
   } catch (err) {
     return err.message;

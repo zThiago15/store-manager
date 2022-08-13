@@ -19,6 +19,7 @@ app.get('/products/:id', middlewaresProducts.validateProductId, productsControll
 app.post('/products', middlewaresProducts.validateNameProduct, productsController.create);
 app.put('/products/:id', middlewaresProducts.validateProductId,
   middlewaresProducts.validateNameProduct, productsController.update);
+app.delete('/products/:id', middlewaresProducts.validateProductId, productsController.remove);
 
 app.get('/sales', salesController.selectAll);
 app.get('/sales/:id', middlewaresSales.validateSaleId, salesController.selectById);
