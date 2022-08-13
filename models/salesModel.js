@@ -19,4 +19,33 @@ const create = async (saleId, productId, quantity) => {
   }
 };
 
-module.exports = { create };
+const selectAll = async () => {
+  try {
+    const query = `SELECT sale_id, sa.date, product_id, quantity 
+      FROM StoreManager.sales_products AS sa_pr
+      INNER JOIN StoreManager.sales AS sa ON sa.id = sa_pr.sale_id
+      ORDER BY sa_pr.sale_id, sa_pr.product_id`;
+    const [response] = await connection.execute(query);
+
+    return response;
+  } catch (err) {
+    return err.message;
+  }
+};
+
+const selectById = async (id) => {
+  try { 
+    const query = `SELECT sa.date, product_id, quantity FROM StoreManager.sales_products AS sa_pr
+      INNER JOIN StoreManager.sales AS sa ON sa.id = sa_pr.sale_id
+      WHERE sa.id = ?
+      ORDER BY sa_pr.sale_id, sa_pr.product_id`;
+    
+    const [response] = await connection.execute(query, [id]);
+
+    return response;
+  } catch (err) {
+    return err.message;
+  }
+};
+
+module.exports = { create, selectAll, selectById };
