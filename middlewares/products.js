@@ -1,6 +1,6 @@
 const productsServices = require('../services/productsServices');
 
-const validateProduct = async (req, res, next) => {
+const validateProductId = async (req, res, next) => {
   const { id } = req.params;
   
   const productExists = await productsServices.getById(id);
@@ -25,4 +25,4 @@ const validateNameProduct = async (req, res, next) => {
   next();
 };
 
-module.exports = { validateProduct, validateNameProduct };
+module.exports = { validateProductId, validateNameProduct };

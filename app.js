@@ -15,18 +15,15 @@ app.get('/', (_request, response) => {
 });
 
 app.get('/products', productsController.selectAll);
-app.get('/products/:id', middlewaresProducts.validateProduct, productsController.selectById);
+app.get('/products/:id', middlewaresProducts.validateProductId, productsController.selectById);
 app.post('/products', middlewaresProducts.validateNameProduct, productsController.create);
+app.put('/products/:id', middlewaresProducts.validateProductId,
+  middlewaresProducts.validateNameProduct, productsController.update);
 
 app.get('/sales', salesController.selectAll);
-
 app.get('/sales/:id', middlewaresSales.validateSaleId, salesController.selectById);
 
 // não remova essa exportação, é para o avaliador funcionar
 // você pode registrar suas rotas normalmente, como o exemplo acima
 // você deve usar o arquivo index.js para executar sua aplicação 
 module.exports = app;
-
-/* --fazer
-[endppoint('/..') para listar vendas e vendaById]
-[valid -> n é possível listar venda q n existe] */

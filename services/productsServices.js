@@ -18,4 +18,10 @@ const create = async (name) => {
   return { id: response.insertId, name };
 };
 
-module.exports = { selectAll, getById, create };
+const update = async (id, name) => {
+  await productsModel.update(name, id);
+
+  return { id, name };
+};
+
+module.exports = { selectAll, getById, create, update };

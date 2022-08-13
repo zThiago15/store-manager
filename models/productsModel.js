@@ -17,13 +17,13 @@ const update = async (name, id) => {
   try {
     const query = 'UPDATE StoreManager.products SET name = ? WHERE id = ?';
 
-    const response = await connection.execute(query, [name, id]);
+    const [response] = await connection.execute(query, [name, id]);
 
-    if (!response) {
+    if (typeof response !== 'object') {
       throw new Error('id inválido');
     }
 
-    return true;
+    return response;
   } catch (err) {
     return err.message;
   }
