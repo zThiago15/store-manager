@@ -1,4 +1,6 @@
 const salesModel = require('../models/salesModel');
+const productsModel = require('../models/productsModel');
+const productsMiddleware = require('./products');
 
 const validateSaleId = async (req, res, next) => {
   const { id } = req.params;
@@ -11,4 +13,44 @@ const validateSaleId = async (req, res, next) => {
   next();
 };
 
-module.exports = { validateSaleId };
+const verifyIfIdAndQuantityExists = async (req, res, next) => {
+  const sale = req.body;
+
+  const productIdExists = sale.filter(({ productId }) => productId);
+  if (productIdExists.length === 0) {
+    return res.status(400).json({ message: '"productId" is required' });
+  }
+
+  const productQuantityExists = sale
+    .filter(({ quantity }) => quantity === undefined || quantity === '');
+  if (productQuantityExists.length !== 0) {
+    return res.status(400).json({ message: '"quantity" is required' });
+  }
+  next();
+};
+
+const validateIdAndQuantity = async (req, res, next) => {
+  const sale = req.body;
+
+  const quantityErrors = sale.some(({ quantity }) => quantity <= 0);
+  if (quantityErrors) {
+    return res.status(422).json({ message: '"quantity" must be greater than or equal to 1' });
+  }
+
+  const salesProducts = sale.map(async ({ productId }) => {
+    const product = await productsModel.getById(productId);
+
+    return product;
+  });
+
+  // Promise.all() - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+  const products = await Promise.all(salesProducts);
+
+  if (products.includes(undefined)) {
+    return res.status(404).json({ message: 'Product not found' });
+  }
+
+  next();
+};
+
+module.exports = { validateSaleId, verifyIfIdAndQuantityExists, validateIdAndQuantity };

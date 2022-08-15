@@ -1,5 +1,17 @@
 const salesModels = require('../models/salesModel');
 
+function newDate() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 const serialize = (sale) => {
   if (sale[0].sale_id) {
     return sale.map(({ sale_id: saleId, date, product_id: productId, quantity }) => ({ 
@@ -29,4 +41,11 @@ const selectById = async (id) => {
   return sale;
 };
 
-module.exports = { selectAll, selectById };
+const create = async (sale) => {
+  const date = newDate();
+  const createdSale = await salesModels.create(sale, date);
+
+  return createdSale;
+};
+
+module.exports = { selectAll, selectById, create };

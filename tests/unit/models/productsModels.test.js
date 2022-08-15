@@ -58,7 +58,7 @@ describe('Ao criar produto', () => {
 
 }); 
 
-describe('Ao passar id e nome do produto para editar', () => { 
+describe('Ao editar produto', () => { 
 
   describe('com informações inválidas', () => {
     const id = 999;
@@ -110,7 +110,7 @@ describe('Ao excluir produto', () => {
     const errorMessage = 'id inválido';
     
     before(() => {
-      sinon.stub(connection, 'execute').resolves(false)
+      sinon.stub(connection, 'execute').resolves(errorMessage)
     });
 
     after(() => {
@@ -120,7 +120,7 @@ describe('Ao excluir produto', () => {
     it('espero que retorne um erro', async () => {
       const productUpdated = await productModel.remove(id);
 
-      expect(productUpdated).to.be.equal('id inválido');
+      expect(productUpdated).to.be.equal(errorMessage);
     });
   });
 

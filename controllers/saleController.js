@@ -14,4 +14,12 @@ const selectById = async (req, res, _next) => {
   return res.status(200).json(sale);
 };
 
-module.exports = { selectAll, selectById };
+const create = async (req, res, _next) => {
+  const sale = req.body;
+
+  const createdSale = await salesServices.create(sale);
+
+  return res.status(201).json(createdSale);
+};
+
+module.exports = { selectAll, selectById, create };

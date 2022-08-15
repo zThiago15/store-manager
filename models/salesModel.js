@@ -1,19 +1,18 @@
 const connection = require('./connection');
 
-const create = async (saleId, productId, quantity) => {
+const create = async (sale, date) => {
   try {
-    const querySale = 'INSERT INTO StoreManager.sales (id) VALUES (?)';
-    await connection.execute(querySale, [saleId]);
+    const querySale = 'INSERT INTO StoreManager.sales (date) VALUES (?)';
+    const [{ insertId }] = await connection.execute(querySale, [date]);
+    
+    const responses = { id: insertId, itemsSold: sale };
+    sale.forEach(async ({ productId, quantity }) => {
+      const querySalesProduct = `INSERT INTO StoreManager.sales_products 
+        (sale_id, product_id, quantity) VALUES (?, ?, ?)`;
+      await connection.execute(querySalesProduct, [insertId, productId, quantity]);
+    });
 
-    const querySalesProduct = `INSERT INTO StoreManager.sales_products 
-      (sale_id, product_id, quantity) VALUES (?, ?, ?)`;
-    const response = await connection.execute(querySalesProduct, [saleId, productId, quantity]);
-
-    if (!response) {
-      throw new Error('Dados inválidos');
-    }
-
-    return response;
+    return responses;
   } catch (err) {
     return err.message;
   }
