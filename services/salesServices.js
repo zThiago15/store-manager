@@ -13,6 +13,7 @@ function newDate() {
 }
 
 const serialize = (sale) => {
+  // todos as vendas
   if (sale[0].sale_id) {
     return sale.map(({ sale_id: saleId, date, product_id: productId, quantity }) => ({ 
       saleId,
@@ -22,6 +23,7 @@ const serialize = (sale) => {
      }));
   }
 
+  // vendas por ID
   return sale.map(({ date, product_id: productId, quantity }) => ({
       date,
       productId,
@@ -60,4 +62,4 @@ const remove = async (id) => {
   return saleRemoved;
 };
 
-module.exports = { selectAll, selectById, create, update, remove };
+module.exports = { selectAll, selectById, create, update, remove, serialize };
