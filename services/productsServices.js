@@ -35,7 +35,7 @@ const search = async (searchTerm) => {
 
   if (response.length === 0) {
     const allProducts = await selectAll();
-    return selectAll();
+    return allProducts;
   }
 
   return response;

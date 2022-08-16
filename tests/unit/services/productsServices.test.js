@@ -22,7 +22,6 @@ describe('Ao executar o product service', () => {
     sinon.stub(productModel, 'create').resolves({ insertId: 1 });
     sinon.stub(productModel, 'update').resolves(true);
     sinon.stub(productModel, 'remove').resolves(true);
-    sinon.stub(productModel, 'search').resolves(products[0]);
   });
   
 
@@ -74,11 +73,37 @@ describe('Ao executar o product service', () => {
   });
 
   describe('search', () => {
-    it('será retornado os produtos encontrados', async () => {
-      const name = 'Martelo';
-      const response = await productsServices.search(name);
-      expect(response).to.be.equal(products[0]);
-    })
+    describe('ao não encontrar nenhum resultado', () => {
+
+      before(() => {
+        sinon.stub(productModel, 'search').resolves([]);
+      });
+      after(() => {
+        productModel.search.restore();
+      })
+
+      it('será retornado todos os produtos', async () => {
+        const name = 'Camiseta';
+        const response = await productsServices.search(name);
+        expect(response).to.be.equal(products);
+      });
+    });
+
+    describe('ao encontrar resultados de busca', () => {
+      before(() => {
+        sinon.stub(productModel, 'search').resolves(products[1]);
+      });
+
+      after(() => {
+        productModel.search.restore();
+      });
+
+      it('os produtos encontrados serão retornados', async () => {
+        const name = 'Batman';
+        const response = await productsServices.search(name);
+        expect(response).to.be.deep.equal(products[1]);
+      });
+    });
 
   });
 
