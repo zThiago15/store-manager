@@ -1,6 +1,5 @@
 const salesModel = require('../models/salesModel');
 const productsModel = require('../models/productsModel');
-const productsMiddleware = require('./products');
 
 const validateSaleId = async (req, res, next) => {
   const { id } = req.params;
@@ -16,14 +15,14 @@ const validateSaleId = async (req, res, next) => {
 const verifyIfIdAndQuantityExists = async (req, res, next) => {
   const sale = req.body;
 
-  const productIdExists = sale.filter(({ productId }) => productId);
-  if (productIdExists.length === 0) {
+  const productNotFound = sale.filter(({ productId }) => !productId);
+  if (productNotFound.length !== 0) {
     return res.status(400).json({ message: '"productId" is required' });
   }
 
-  const productQuantityExists = sale
+  const quantityNotFound = sale
     .filter(({ quantity }) => quantity === undefined || quantity === '');
-  if (productQuantityExists.length !== 0) {
+  if (quantityNotFound.length !== 0) {
     return res.status(400).json({ message: '"quantity" is required' });
   }
   next();

@@ -23,7 +23,13 @@ const create = async (req, res, _next) => {
 };
 
 const update = async (req, res, _next) => {
+  const { id } = req.params;
+
   const sale = req.body;
+
+  const updatedSale = await salesServices.update(id, sale);
+
+  return res.status(200).json(updatedSale);
 };
 
 const remove = async (req, res, _next) => {
@@ -33,4 +39,4 @@ const remove = async (req, res, _next) => {
   return res.status(204).end();
 };
 
-module.exports = { selectAll, selectById, create, remove };
+module.exports = { selectAll, selectById, create, remove, update };
