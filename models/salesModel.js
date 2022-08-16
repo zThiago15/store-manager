@@ -47,4 +47,11 @@ const selectById = async (id) => {
   }
 };
 
-module.exports = { create, selectAll, selectById };
+const remove = async (id) => {
+  const query = 'DELETE FROM StoreManager.sales WHERE id = ?';
+  const [response] = await connection.execute(query, [id]);
+
+  return response;
+};
+
+module.exports = { create, selectAll, selectById, remove };

@@ -4,7 +4,7 @@ const productServices = require('../../../services/productsServices');
 
 const sinon = require('sinon');
 
-describe('Ao executar o controller', () => {
+describe('Ao executar o productController', () => {
 
   const products = [ 
       {

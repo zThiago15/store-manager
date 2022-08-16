@@ -48,4 +48,10 @@ const create = async (sale) => {
   return createdSale;
 };
 
-module.exports = { selectAll, selectById, create };
+const remove = async (id) => {
+  const saleRemoved = await salesModels.remove(id);
+
+  return saleRemoved;
+};
+
+module.exports = { selectAll, selectById, create, remove };
