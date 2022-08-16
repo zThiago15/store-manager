@@ -15,6 +15,7 @@ app.get('/', (_request, response) => {
   response.send();
 });
 
+app.get('/products/search', productsController.search);
 app.get('/products', productsController.selectAll);
 app.get('/products/:id', middlewaresProducts.validateProductId, productsController.selectById);
 app.post('/products', middlewaresProducts.validateNameProduct, productsController.create);

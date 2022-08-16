@@ -33,7 +33,7 @@ describe('Ao executar o saleController', () => {
     }
   ];
 
-  const createdSale = [
+  const createdOrUpdatedSale = [
     {
       "productId": 1,
       "quantity": 1
@@ -57,7 +57,8 @@ describe('Ao executar o saleController', () => {
 
     sinon.stub(salesServices, 'selectAll').returns(sales);
     sinon.stub(salesServices, 'selectById').returns(oneSale);
-    sinon.stub(salesServices, 'create').returns(createdSale);
+    sinon.stub(salesServices, 'create').returns(createdOrUpdatedSale);
+    sinon.stub(salesServices, 'update').returns(createdOrUpdatedSale);
   });
 
   after(() => {
@@ -100,7 +101,20 @@ describe('selectById', () => {
   
     it('será retornado a venda criada', async () => {
       await saleController.create(req, res);
-      expect(res.json.calledWith(createdSale)).to.be.equal(true);
+      expect(res.json.calledWith(createdOrUpdatedSale)).to.be.equal(true);
+    });
+  });  
+
+  describe('update', () => {
+    it('será retornado status 200', async () => {
+      await saleController.update(req, res);
+      expect(res.status.calledWith(200)).to.be.equal(true);
+
+    });
+  
+    it('será retornado a venda atualizada', async () => {
+      await saleController.update(req, res);
+      expect(res.json.calledWith(createdOrUpdatedSale)).to.be.equal(true);
     });
   });  
 

@@ -30,4 +30,14 @@ const remove = async (id) => {
   return response;
 };
 
-module.exports = { selectAll, getById, create, update, remove };
+const search = async (searchTerm) => {
+  const response = await productsModel.search(searchTerm);
+
+  if (response.length === 0) {
+    return selectAll();
+  }
+
+  return response;
+};
+
+module.exports = { selectAll, getById, create, update, remove, search };

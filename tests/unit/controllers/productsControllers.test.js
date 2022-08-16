@@ -29,7 +29,7 @@ describe('Ao executar o productController', () => {
   before(() => {
     req.body = {};
     req.params = { id: 1 };
-
+    req.query = { q: 'martelo' }
 
     res.status = sinon.stub().returns(res); 
     res.json = sinon.stub().returns();
@@ -38,6 +38,7 @@ describe('Ao executar o productController', () => {
     sinon.stub(productServices, 'getById').returns(products[0]);
     sinon.stub(productServices, 'create').returns(productCreated);
     sinon.stub(productServices, 'update').returns(products[1]);
+    sinon.stub(productServices, 'search').returns(products);
   });
 
   after(() => {
@@ -118,6 +119,15 @@ describe('Ao executar o productController', () => {
       await productController.remove(req, res);
 
       expect(res.status.calledWith(204)).to.be.equal(true);
+    });
+  });
+
+  describe('search', () => {
+
+    it('será retornado status 200', async () => {
+      await productController.search(req, res);
+
+      expect(res.status.calledWith(200)).to.be.equal(true);
     });
   });
 

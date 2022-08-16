@@ -36,4 +36,11 @@ const remove = async (req, res, _next) => {
   return res.status(204).end();
 };
 
-module.exports = { selectAll, selectById, create, update, remove };
+const search = async (req, res, _next) => {
+  const { q } = req.query;
+
+  const products = await productsServices.search(q);
+  return res.status(200).json(products);
+};
+
+module.exports = { selectAll, selectById, create, update, remove, search };
