@@ -6,34 +6,44 @@ const salesModel = require("../../../models/salesModel");
 
 describe('ao cadastrar uma venda', () => {
 
-    const saleId = 1;
-    const productId = 2;
-    const quantity = 2;
+  const sale = [
+    {
+      "productId": 1,
+      "quantity": 1
+    },
+    {
+      "productId": 2,
+      "quantity": 5
+    }
+  ];
+  const date = '01/01/2001 12:00:00';
+
+  const responses =   {
+    "id": 3,
+    "itemsSold": [
+      {
+        "productId": 1,
+        "quantity":1
+      },
+      {
+        "productId": 2,
+        "quantity":5
+      }
+    ]
+  };
 
 
   beforeEach(sinon.restore);
-  describe('com dados inválidos', () => {
-    const errorMessage = 'Dados inválidos';
-
-    it('deverá retornar um erro', async () => {
-      sinon.stub(connection, 'execute').resolves(false);
-
-      const salesCreated = await salesModel.create(saleId, productId, quantity);
-
-      expect(salesCreated).to.be.equal(errorMessage)
-    });
-  });
-
   describe('com dados válidos', () => {
     it('deverá retornar o insertId', async () => {
-      const id = { insertId: 1 };
+      const id = { insertId: 3 };
 
-      sinon.stub(connection, 'execute').resolves(id);
+      sinon.stub(connection, 'execute').resolves([id]);
 
-      const salesCreated = await salesModel.create(saleId, productId, quantity);
-      expect(salesCreated).to.be.equal(id);
+      const salesCreated = await salesModel.create(sale, date);
+      expect(salesCreated).to.be.equal(responses);
     });
-  })
+  });
 
 });
 

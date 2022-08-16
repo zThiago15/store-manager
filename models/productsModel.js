@@ -14,19 +14,11 @@ const create = async (name) => {
 };
 
 const update = async (name, id) => {
-  try {
-    const query = 'UPDATE StoreManager.products SET name = ? WHERE id = ?';
+  const query = 'UPDATE StoreManager.products SET name = ? WHERE id = ?';
 
-    const [response] = await connection.execute(query, [name, id]);
+  const [response] = await connection.execute(query, [name, id]);
 
-    if (typeof response !== 'object') {
-      throw new Error('id inválido');
-    }
-
-    return response;
-  } catch (err) {
-    return err.message;
-  }
+  return response;
 };
 
 const remove = async (id) => {

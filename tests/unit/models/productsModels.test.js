@@ -66,8 +66,7 @@ describe('Ao editar produto', () => {
     const name = 'Traje de invisibilidade'
 
     before(() => {
-
-      sinon.stub(connection, 'execute').resolves(false)
+      sinon.stub(connection, 'execute').resolves(errorMessage)
     });
 
     after(() => {
@@ -141,5 +140,44 @@ describe('Ao excluir produto', () => {
       expect(productUpdated).to.be.equal(true);
     });
   });
+});
 
+describe('Ao buscar um produto por Id', () => { 
+
+  describe('com id inválido', () => {
+    const id = 1;
+    const errorMessage = 'id inválido';
+    
+    before(() => {
+      sinon.stub(connection, 'execute').resolves(errorMessage)
+    });
+
+    after(() => {
+      connection.execute.restore();
+    });
+
+    it('espero que retorne um erro', async () => {
+      const productUpdated = await productModel.getById(id);
+
+      expect(productUpdated).to.be.equal(errorMessage);
+    });
+  });
+
+  describe('com id válido', () => {
+    const id = 1;
+
+    before(() => {
+      sinon.stub(connection, 'execute').resolves(true)
+    });
+
+    after(() => {
+      connection.execute.restore();
+    });
+
+    it('espero que retorne true', async () => {
+      const productUpdated = await productModel.getById(id);
+
+      expect(productUpdated).to.be.equal(true);
+    });
+  });
 });
