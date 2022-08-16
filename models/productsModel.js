@@ -36,10 +36,10 @@ const getById = async (id) => {
 };
 
 const search = async (searchTerm) => {
-    const query = 'SELECT * FROM StoreManager.products WHERE name LIKE "%?%"';
-    const [response] = await connection.execute(query, [searchTerm]);
-  
-    return response;
+  const query = 'SELECT * FROM StoreManager.products WHERE name LIKE ?';
+  const [response] = await connection.execute(query, [`%${searchTerm}%`]);
+
+  return response;
 };
 
 module.exports = { selectAll, create, update, remove, getById, search };

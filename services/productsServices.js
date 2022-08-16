@@ -13,9 +13,9 @@ const getById = async (id) => {
 };
 
 const create = async (name) => {
-  const response = await productsModel.create(name);
+  const { insertId } = await productsModel.create(name);
 
-  return { id: response.insertId, name };
+  return { id: insertId, name };
 };
 
 const update = async (id, name) => {
@@ -34,6 +34,7 @@ const search = async (searchTerm) => {
   const response = await productsModel.search(searchTerm);
 
   if (response.length === 0) {
+    const allProducts = await selectAll();
     return selectAll();
   }
 
