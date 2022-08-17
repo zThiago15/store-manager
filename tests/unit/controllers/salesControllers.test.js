@@ -64,6 +64,8 @@ describe('Ao executar o saleController', () => {
   after(() => {
     salesServices.selectAll.restore();
     salesServices.selectById.restore();
+    salesServices.create.restore();
+    salesServices.update.restore();
   });
 
   describe('selectAll', () => {
@@ -126,6 +128,10 @@ describe('selectById', () => {
       res.end = sinon.stub().returns();
 
       sinon.stub(salesServices, 'remove').returns('');
+    });
+
+    after(() => {
+      salesServices.remove.restore();
     });
 
     it('será retornado status 204', async () => {

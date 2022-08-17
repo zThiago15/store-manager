@@ -16,21 +16,30 @@ describe('Ao executar o product service', () => {
     }
   ]
 
+  const objId = { insertId: 1 };
+
   before(() => {
-    sinon.stub(productModel, 'selectAll').resolves(products);
-    sinon.stub(productModel, 'getById').resolves(products[0]);
-    sinon.stub(productModel, 'create').resolves({ insertId: 1 });
-    sinon.stub(productModel, 'update').resolves(true);
-    sinon.stub(productModel, 'remove').resolves(true);
+    sinon.stub(productModel, 'selectAll').returns(products);
+    sinon.stub(productModel, 'getById').returns(products[0]);
+    sinon.stub(productModel, 'create').returns(objId);
+    sinon.stub(productModel, 'update').returns(true);
+    sinon.stub(productModel, 'remove').returns(true);
   });
   
+  after(() => {
+    productModel.selectAll.restore();
+    productModel.getById.restore();
+    productModel.create.restore();
+    productModel.update.restore();
+    productModel.remove.restore();
+  });
 
   describe('selectAll', () => {
     it('será retornado todos os produtos', async () => {
       const response = await productsServices.selectAll();
 
-      expect(response).to.be.equal(products);
-    })
+      expect(response).to.be.deep.equal(products);
+    });
   });
 
   describe('getById', () => {
@@ -47,7 +56,7 @@ describe('Ao executar o product service', () => {
       const name = 'Martelo de Thor';
       const response = await productsServices.create(name);
 
-      expect(response).to.be.eql({ id: 1, name });
+      expect(response).to.be.deep.equal({ id: objId.insertId, name });
     })
   });
 
@@ -56,10 +65,9 @@ describe('Ao executar o product service', () => {
       const id = 2;
       const name = 'Máscara do Batman';
       const response = await productsServices.update(id, name);
-      
 
       expect(response).to.be.deep.equal({ id, name });
-    })
+    });
   });
 
   describe('remove', () => {
@@ -78,6 +86,7 @@ describe('Ao executar o product service', () => {
       before(() => {
         sinon.stub(productModel, 'search').resolves([]);
       });
+
       after(() => {
         productModel.search.restore();
       })
@@ -85,13 +94,13 @@ describe('Ao executar o product service', () => {
       it('será retornado todos os produtos', async () => {
         const name = 'Camiseta';
         const response = await productsServices.search(name);
-        expect(response).to.be.equal(products);
+        expect(response).to.be.deep.equal(products);
       });
     });
 
     describe('ao encontrar resultados de busca', () => {
       before(() => {
-        sinon.stub(productModel, 'search').resolves(products[1]);
+        sinon.stub(productModel, 'search').resolves(products);
       });
 
       after(() => {
@@ -99,9 +108,9 @@ describe('Ao executar o product service', () => {
       });
 
       it('os produtos encontrados serão retornados', async () => {
-        const name = 'Batman';
+        const name = 'a';
         const response = await productsServices.search(name);
-        expect(response).to.be.deep.equal(products[1]);
+        expect(response).to.be.deep.equal(products);
       });
     });
 

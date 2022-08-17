@@ -4,9 +4,7 @@ const sinon = require('sinon');
 const connection = require('../../../models/connection');
 const productModel = require('../../../models/productsModel');
 
-describe('Ao fazer chamada para listar todos os produtos', () => {
-
-  before(() => {
+describe('Ao executar o productModel', () => {
     const products = [{
       id: 1,
       name: "Martelo de Thor",
@@ -15,169 +13,122 @@ describe('Ao fazer chamada para listar todos os produtos', () => {
       id: 2,
       name: "Traje de encolhimento",
     }];
-    
-    sinon.stub(connection, 'execute').resolves(products);
 
-  })
-
-  after(() => {
-    connection.execute.restore();
-  });
-
-  it('será retornado um array com 2 elementos', async () => {
-    const response = await productModel.selectAll();
-
-    expect(response).to.be.an('object');
-  });
-
-  it('ter as propridades id e name', async () => {
-    const response = await productModel.selectAll();
-
-    expect(response).to.have.a.property('name');
-    expect(response).to.have.a.property('id');
-  });
-});
-
-describe('Ao criar produto', () => {
+  describe('selectAll', () => {
     before(() => {
-    const products = [{ insertId: 1 }];
-    
-    sinon.stub(connection, 'execute').resolves(products);
-
-  })
-
-  after(() => {
-    connection.execute.restore();
-  });
-
-  it('espero que retorna o insertId do produto', async () => {
-    const productCreated = await productModel.create();
-
-    expect(productCreated).to.have.property('insertId', 1);
-  });
-
-}); 
-
-describe('Ao editar produto', () => { 
-
-  describe('com informações inválidas', () => {
-    const id = 999;
-    const errorMessage = 'id inválido';
-    const name = 'Traje de invisibilidade'
-
-    before(() => {
-      sinon.stub(connection, 'execute').resolves(errorMessage)
+      sinon.stub(connection, 'execute').resolves([products]);
     });
 
     after(() => {
       connection.execute.restore();
     });
 
-    it('espero que retorne um erro', async () => {
+    it('será retornado os produtos em um array com 2 elementos', async () => {
+      const response = await productModel.selectAll();
+
+      expect(response).to.be.an('array');
+      expect(response.length).to.be.equal(2);
+    });
+
+    it('o primeiro elemento ter as propridades id e name', async () => {
+      const response = await productModel.selectAll();
+
+      expect(response[0]).to.have.a.property('name');
+      expect(response[0]).to.have.a.property('id');
+    });
+  });
+
+  describe('create', () => {
+    before(() => {
+      sinon.stub(connection, 'execute').resolves([products[0]]);
+    })
+
+    after(() => {
+      connection.execute.restore();
+    });
+
+    it('espero que retorna o id e nome do produto criado', async () => {
+      const productCreated = await productModel.create();
+
+      expect(productCreated).to.have.property('id');
+      expect(productCreated).to.have.property('name');
+      expect(productCreated).to.be.deep.equal(products[0]);
+    });
+
+  }); 
+
+  describe('update', () => { 
+
+    before(() => {
+      sinon.stub(connection, 'execute').resolves([products[1]])
+    });
+
+    after(() => {
+      connection.execute.restore();
+    });
+
+    it('produto será atualizado', async () => {
+      const id = 2;
+      const name = 'Traje de encolhimento';
+
       const productUpdated = await productModel.update(id, name);
 
-      expect(productUpdated).to.be.equal('id inválido');
+      expect(productUpdated).to.be.equal(products[1]);
     });
   });
 
-describe('com informações válidas', () => {
-    const id = 2;
-    const name = 'Traje de invisibilidade'
-    
-    before(() => {
-
-      sinon.stub(connection, 'execute').resolves(true)
-    });
-
-    after(() => {
-      connection.execute.restore();
-    });
-
-    it('espero que retorne um erro', async () => {
-      const productUpdated = await productModel.update(id, name);
-
-      expect(productUpdated).to.be.equal(true);
-    });
-  });
-
-}); 
-
-describe('Ao excluir produto', () => { 
-
-  describe('com id inválido', () => {
-    const id = 1;
-    const errorMessage = 'id inválido';
-    
-    before(() => {
-      sinon.stub(connection, 'execute').resolves(errorMessage)
-    });
-
-    after(() => {
-      connection.execute.restore();
-    });
-
-    it('espero que retorne um erro', async () => {
-      const productUpdated = await productModel.remove(id);
-
-      expect(productUpdated).to.be.equal(errorMessage);
-    });
-  });
-
-  describe('com id válido', () => {
+  describe('remove', () => {
     const id = 1;
 
     before(() => {
-      sinon.stub(connection, 'execute').resolves(true)
-    });
+      sinon.stub(connection, 'execute').resolves(true);
+    });true
 
     after(() => {
       connection.execute.restore();
     });
 
-    it('espero que retorne true', async () => {
+    it('o produto será removido', async () => {
       const productUpdated = await productModel.remove(id);
 
       expect(productUpdated).to.be.equal(true);
     });
   });
-});
 
-describe('Ao buscar um produto por Id', () => { 
-
-  describe('com id inválido', () => {
+  describe('getById', () => {
     const id = 1;
-    const errorMessage = 'id inválido';
     
     before(() => {
-      sinon.stub(connection, 'execute').resolves(errorMessage)
+      sinon.stub(connection, 'execute').resolves([[products[0]]])
     });
 
     after(() => {
       connection.execute.restore();
     });
 
-    it('espero que retorne um erro', async () => {
+    it('será retornado o produto buscado por Id', async () => {
       const productUpdated = await productModel.getById(id);
 
-      expect(productUpdated).to.be.equal(errorMessage);
+      expect(productUpdated).to.be.equal(products[0]);
     });
   });
 
-  describe('com id válido', () => {
+  describe('search', () => {
     const id = 1;
-
+    
     before(() => {
-      sinon.stub(connection, 'execute').resolves(true)
+      sinon.stub(connection, 'execute').resolves([products[0]])
     });
 
     after(() => {
       connection.execute.restore();
     });
 
-    it('espero que retorne true', async () => {
-      const productUpdated = await productModel.getById(id);
+    it('será retornado o produto buscado pelo termo', async () => {
+      const productUpdated = await productModel.search('martelo');
 
-      expect(productUpdated).to.be.equal(true);
+      expect(productUpdated).to.be.equal(products[0]);
     });
   });
-});
+
+  });

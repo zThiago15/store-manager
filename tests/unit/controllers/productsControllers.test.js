@@ -46,6 +46,7 @@ describe('Ao executar o productController', () => {
     productServices.getById.restore();
     productServices.create.restore();
     productServices.update.restore();
+    productServices.search.restore();
   });
 
   describe('selectAll', () => {

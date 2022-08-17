@@ -91,23 +91,30 @@ describe('Ao executar o sale service', () => {
     "itemsUpdated": [
       {
         "productId": 1,
-        "quantity":10
+        "quantity":1
       },
       {
         "productId": 2,
-        "quantity":50
+        "quantity":5
       }
     ]
   }
 
   before(() => {
-      sinon.stub(salesModel, 'selectAll').resolves(salesDB);
-      sinon.stub(salesModel, 'selectById').resolves(oneSale);
-      sinon.stub(salesModel, 'create').resolves(createdSales);
-      sinon.stub(salesModel, 'update').resolves(updatedSales);
-      sinon.stub(salesModel, 'remove').resolves(true);
-    });
+    sinon.stub(salesModel, 'selectAll').resolves(salesDB);
+    sinon.stub(salesModel, 'selectById').resolves(oneSale);
+    sinon.stub(salesModel, 'create').resolves(createdSales);
+    sinon.stub(salesModel, 'update').resolves(updatedSales);
+    sinon.stub(salesModel, 'remove').resolves(true);
+  });
   
+  after(() => {
+    salesModel.selectAll.restore();
+    salesModel.selectById.restore();
+    salesModel.create.restore();
+    salesModel.update.restore();
+    salesModel.remove.restore();
+  })
 
   describe('selectAll', () => {
     it('será retornado todas as vendas', async () => {
@@ -128,10 +135,10 @@ describe('Ao executar o sale service', () => {
 
   describe('create', () => {
 
-    it('será retornado a venda criado', async () => {
+    it('será retornado a venda criada', async () => {
       const response = await salesServices.create(salesToCreateOrUpdate);
 
-      expect(response).to.be.eql(createdSales);
+      expect(response).to.be.deep.equal(createdSales);
     });
   });
 
