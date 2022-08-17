@@ -113,9 +113,7 @@ describe('Ao executar o productModel', () => {
     });
   });
 
-  describe('search', () => {
-    const id = 1;
-    
+  describe('search', () => {    
     before(() => {
       sinon.stub(connection, 'execute').resolves([products[0]])
     });
@@ -130,5 +128,4 @@ describe('Ao executar o productModel', () => {
       expect(productUpdated).to.be.equal(products[0]);
     });
   });
-
-  });
+});

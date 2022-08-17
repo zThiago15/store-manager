@@ -1,7 +1,6 @@
 const connection = require('./connection');
 
 const create = async (sale, date) => {
-  try {
     const querySale = 'INSERT INTO StoreManager.sales (date) VALUES (?)';
     const [{ insertId }] = await connection.execute(querySale, [date]);
     
@@ -13,49 +12,39 @@ const create = async (sale, date) => {
     });
 
     return responses;
-  } catch (err) {
-    return err.message;
-  }
 };
 
 const selectAll = async () => {
-  try {
-    const query = `SELECT sale_id, sa.date, product_id, quantity 
-      FROM StoreManager.sales_products AS sa_pr
-      INNER JOIN StoreManager.sales AS sa ON sa.id = sa_pr.sale_id
-      ORDER BY sa_pr.sale_id, sa_pr.product_id`;
-    const [response] = await connection.execute(query);
+  const query = `SELECT sale_id, sa.date, product_id, quantity 
+    FROM StoreManager.sales_products AS sa_pr
+    INNER JOIN StoreManager.sales AS sa ON sa.id = sa_pr.sale_id
+    ORDER BY sa_pr.sale_id, sa_pr.product_id`;
+  const [response] = await connection.execute(query);
 
-    return response;
-  } catch (err) {
-    return err.message;
-  }
+  return response;
 };
 
 const selectById = async (id) => {
-  try { 
-    const query = `SELECT sa.date, product_id, quantity FROM StoreManager.sales_products AS sa_pr
-      INNER JOIN StoreManager.sales AS sa ON sa.id = sa_pr.sale_id
-      WHERE sa.id = ?
-      ORDER BY sa_pr.sale_id, sa_pr.product_id`;
-    
-    const [response] = await connection.execute(query, [id]);
+  const query = `SELECT sa.date, product_id, quantity FROM StoreManager.sales_products AS sa_pr
+    INNER JOIN StoreManager.sales AS sa ON sa.id = sa_pr.sale_id
+    WHERE sa.id = ?
+    ORDER BY sa_pr.sale_id, sa_pr.product_id`;
+  
+  const [response] = await connection.execute(query, [id]);
 
-    return response;
-  } catch (err) {
-    return err.message;
-  }
+  return response;
 };
 
-const update = async (id, sales) => {
-  const query = 'UPDATE StoreManager.sales_products SET quantity = ? WHERE product_id = ?';
+const update = async (saleId, sales) => {
+  const query = `UPDATE StoreManager.sales_products 
+    SET quantity = ? WHERE product_id = ? AND sale_id = ?`;
 
   sales.forEach(async ({ productId, quantity }) => {
-    await connection.execute(query, [quantity, productId]);
+    await connection.execute(query, [quantity, productId, saleId]);
   });
 
   return {
-    saleId: id,
+    saleId,
     itemsUpdated: sales,
   };
 };

@@ -31,7 +31,7 @@ describe('Ao executar o salesModel', () => {
       }
     ]
   };
-  const salesDB = [
+  const sales = [
     {
       "sale_id": 1,
       "date": "2021-09-09T04:54:29.000Z",
@@ -59,7 +59,7 @@ describe('Ao executar o salesModel', () => {
     }
   ];
 
-  const salesToCreateOrUpdate = [
+  const salesToUpdate = [
     {
       "productId": 1,
       "quantity": 1
@@ -116,47 +116,84 @@ describe('Ao executar o salesModel', () => {
     });
   });
 
-});
+  describe('selectAll', () => {
 
-describe('ao listar todas as vendas', () => {
+      before(() => {
+        sinon.stub(connection, 'execute').resolves([sales]);
+      });
 
-    it('deverá retorna um array', async () => {
-      
-      const sales = [{
-        sale_id: 1,
-        product_id: 2,
-        quantity: 2
-      }];
+      after(() => {
+        connection.execute.restore();
+      });
 
-      sinon.stub(connection, 'execute').resolves(sales);
+      it('deverá retorna um array com todos as vendas', async () => {
 
-      const salesCreated = await salesModel.selectAll();
-      expect(salesCreated).to.be.equal(sales);
+        const salesSelected = await salesModel.selectAll();
+        expect(salesSelected).to.be.equal(sales);
 
-      expect(salesCreated[0]).to.have.property('sale_id');
-      expect(salesCreated[0]).to.have.property('product_id');
-      expect(salesCreated[0]).to.have.property('quantity');
+        expect(salesSelected[0]).to.have.property('sale_id');
+        expect(salesSelected[0]).to.have.property('product_id');
+        expect(salesSelected[0]).to.have.property('quantity');
+      });
+  });
+
+  describe('selectById', () => {
+
+    describe('será retornado a venda do id especificado', () => {
+        before(() => {
+          sinon.stub(connection, 'execute').resolves([oneSale]);
+        });
+    
+        after(() => {
+          connection.execute.restore();
+        });
+
+      it('deverá retornar uma venda específica', async () => {
+        const id = 1;
+        const oneSaleSelected = await salesModel.selectById(id);
+  
+        expect(oneSaleSelected).to.be.equal(oneSale);
+      });
+
     });
-});
 
-describe('ao listar todas as vendas', () => {
 
-  beforeEach(sinon.restore);
-    it('deverá retorna um array', async () => {
-      
-      const sales = [{
-        sale_id: 1,
-        product_id: 2,
-        quantity: 2
-      }];
 
-      sinon.stub(connection, 'execute').resolves(sales);
+  });
 
-      const salesCreated = await salesModel.selectAll();
-      expect(salesCreated).to.be.equal(sales);
-
-      expect(salesCreated[0]).to.have.property('sale_id');
-      expect(salesCreated[0]).to.have.property('product_id');
-      expect(salesCreated[0]).to.have.property('quantity');
+  describe('update', () => {
+    before(() => {
+      sinon.stub(connection, 'execute').resolves(true);
     });
+
+    after(() => {
+      connection.execute.restore();
+    });
+
+    it('deverá retornar a venda atualizada', async () => {
+      const id = 1;
+      const updatedSale = await salesModel.update(id, salesToUpdate);
+
+      expect(updatedSale).to.be.deep.equal({ saleId: id, itemsUpdated: salesToUpdate });
+    });
+  });
+  
+  describe('remove',  () => {
+    before(() => {
+      sinon.stub(connection, 'execute').resolves([true]);
+    });
+
+    after(() => {
+      connection.execute.restore();
+    });
+
+    it('deverá deletar uma venda', async () => {
+      const id = 1;
+      const removedSale = await salesModel.remove(id);
+
+      expect(removedSale).to.be.equal(true);
+    });
+  });
+
 });
+
